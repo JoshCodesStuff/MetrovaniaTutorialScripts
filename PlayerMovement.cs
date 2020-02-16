@@ -8,30 +8,34 @@ public class PlayerMovement : MonoBehaviour
 {
     //accessible inside editor
     public float speed = 2;
-
-    private float horizMovement;
+    public float horizMovement;
 
     //cannot be accessed inside editor
-    private Rigidbody2D rb;
+    private Rigidbody2D rb2D;
 
     //called on start
     private void Start()
     {
-        //define the rigidbody before scene loads
-        rb = gameObject.GetComponent<Rigidbody2D>();
+        //define the rigidbody as the scene loads
+        rb2D = GetComponent<Rigidbody2D>();
+    }
+
+    private void Update()
+    {
+        //direction set [GetAxisRaw returns 0,1 or -1 
+        //based on input
+        horizMovement = Input.GetAxis("Horizontal");
     }
 
     //called by internal clock rather than frame updates
     private void FixedUpdate()
     {
-        //direction set [GetAxisRaw returns 0,1 or -1 
-        //based on input
-        horizMovement = Input.GetAxisRaw("Horizontal");
-
-        //creates a directional vector for our movement
-        Vector2 movement = new Vector2(horizMovement, 0);
-
         //adds a force to the players rigidbody2d (moves the player)
-        rb.AddForce(movement * speed);
+        rb2D.velocity = new Vector2(horizMovement * speed, rb2D.velocity.y);
+    }
+
+    private void Flip()
+    {
+        
     }
 }
