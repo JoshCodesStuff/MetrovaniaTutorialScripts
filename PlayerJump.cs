@@ -2,12 +2,13 @@ using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Animator))]
 public class PlayerJump : MonoBehaviour
 {
     [Header("Jump Details")]
     public float jumpTime;//max time for jumping
     public float jumpForce;//force for jumping
-    public float jumpTimeCounter;//counter tracks time jumping
+    private float jumpTimeCounter;//counter tracks time jumping
     private bool stoppedJumping;//tracks when jump ends
 
     [Header("Ground Details")]
@@ -16,14 +17,17 @@ public class PlayerJump : MonoBehaviour
     public float groundCheckRadius;//radius for ground check
     private bool grounded;//grounded - y/n
 
-    [Header("Rigidbody")]
+    [Header("Components")]
     private Rigidbody2D rb;//used to apply forces to player
+    private Animator myAnimator;
+    
 
     private void Start()
     {
         //sets the jumpCounter to whatever we set our jumptime to in the editor
         jumpTimeCounter = jumpTime;
         rb = GetComponent<Rigidbody2D>();
+        myAnimator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -36,6 +40,7 @@ public class PlayerJump : MonoBehaviour
         {
             //the jumpcounter is whatever we set jumptime to in the editor.
             jumpTimeCounter = jumpTime;
+            //myAnimator.SetLayerWeight 
         }
     }
 
