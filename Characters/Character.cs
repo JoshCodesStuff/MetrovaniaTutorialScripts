@@ -7,7 +7,7 @@ public abstract class Character : MonoBehaviour
     public Animator anim { get; private set; }
     protected bool facingRight;
     protected bool TakingDamage { get; set; }
-    protected bool Attack { get; set; }
+    public bool Attack { get; set; }
     protected abstract bool IsDead { get; }
     [SerializeField] protected float speed;
     [SerializeField] protected Stats healthStat;

@@ -17,7 +17,7 @@ public class Player : Character
     [SerializeField] private LayerMask whatIsGround;//assigned in the inspector
     [SerializeField] private Transform groundCheck;//detects touching the ground
     [SerializeField] private float groundCheckRadius;//radius for ground check
-    [SerializeField] private bool grounded;//grounded - y/n
+    public bool grounded;//grounded - y/n
     private bool IsFalling
     {
         get
@@ -28,7 +28,7 @@ public class Player : Character
 
     [Header("Components")]
     private static Player instance;
-    private Rigidbody2D rb { get; set; }//used to apply forces to player
+    public Rigidbody2D rb { get; set; }//used to apply forces to player
     public static Player Instance
     {
         get

@@ -17,6 +17,12 @@ public class PatrolState : IEnemyStates
     public void Execute()
     {
         Patrol();
+
+        enemy.Move();
+        if (enemy.target != null && enemy.OutOfRange)
+        {
+            enemy.ChangeState(new AtRangeState());
+        }
     }
     public void Exit()
     {
