@@ -5,6 +5,7 @@ using UnityEngine;
 public class PatrolState : IEnemyStates
 {
     private Enemy enemy;
+
     private float patrolTimer;
     private float patrolDuration = 10f;
 
@@ -13,13 +14,15 @@ public class PatrolState : IEnemyStates
         this.enemy = enemy;
         Debug.Log("Patrolling");
         patrolTimer = 0f;
+        patrolDuration = Random.Range(5, 10);
     }
     public void Execute()
     {
         Patrol();
 
         enemy.Move();
-        if (enemy.target != null && enemy.OutOfRange)
+
+        if (enemy.target != null && enemy.VisibleRange)
         {
             enemy.ChangeState(new AtRangeState());
         }
@@ -31,9 +34,6 @@ public class PatrolState : IEnemyStates
     private void Patrol()
     {
         patrolTimer += Time.deltaTime;
-        if (patrolTimer >= patrolDuration)
-        {
-            enemy.ChangeState(new IdleState());
-        }
+        if (patrolTimer >= patrolDuration) enemy.ChangeState(new IdleState());
     }
 }

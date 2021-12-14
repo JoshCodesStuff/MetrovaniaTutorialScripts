@@ -130,7 +130,8 @@ public class Player : Character
     }
     public override IEnumerator TakeDamage()
     {
-        healthStat.CurrentVal -= 1;
+        healthStat.CurrentVal--;
+        TakingDamage = true;
 
         if (!IsDead) anim.SetTrigger("damage");
         else
@@ -144,5 +145,11 @@ public class Player : Character
     void OnDrawGizmos()
     {
         Gizmos.DrawSphere(groundCheck.position, groundCheckRadius);
+    }
+    public override void Death()
+    {
+        Debug.Log("Player Died");
+
+        healthStat.CurrentVal = healthStat.MaxVal;
     }
 }

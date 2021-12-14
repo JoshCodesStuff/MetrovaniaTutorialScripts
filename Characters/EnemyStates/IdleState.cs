@@ -5,17 +5,24 @@ using UnityEngine;
 public class IdleState : IEnemyStates
 {
     private Enemy enemy;
-    [SerializeField] private float idleTimer;
-    [SerializeField] private float idleDuration = 3f;
+
+    private float idleTimer;
+    private float idleDuration;
+    
     public void Enter(Enemy enemy)
     {
         this.enemy = enemy;
         Debug.Log("I'm Idling");
-        idleTimer = 0f;
+        idleTimer = 0;
+        idleDuration = Random.Range(1, 10);
     }
     public void Execute()
     {
         Idle();
+        if (enemy.target != null)
+        {
+            enemy.ChangeState(new PatrolState());
+        }
     }
     private void Idle()
     {

@@ -10,17 +10,13 @@ public class AtRangeState : IEnemyStates
     public void Exit() { }
     public void Execute() 
     {
-        if (enemy.InHitRange)
-        {
-            enemy.ChangeState(new MeleeState());
-        }
-        else if (enemy.target != null)
-        {
-            enemy.Move();
-        }
-        else
-        {
-            enemy.ChangeState(new IdleState());
-        }
+        //if within melee distance to target
+        if (enemy.InMeleeRange) enemy.ChangeState(new MeleeState());
+
+        //else if player is visible but outside of hit range
+        else if (enemy.target != null) enemy.Move();
+
+        //else if enemy can't see player, reset to idle
+        else enemy.ChangeState(new IdleState()); 
     }
 }

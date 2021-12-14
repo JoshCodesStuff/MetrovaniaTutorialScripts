@@ -4,38 +4,37 @@ using UnityEngine;
 
 public class Enemy : Character
 {
-    private Enemy enemy;
     private IEnemyStates currentState;
 
-    public float hitRadius;
-    public Transform hitCheck;
-    public LayerMask whatisenemy;
     [SerializeField] public GameObject target { get; set; }
+    public Transform player;
 
-    [SerializeField] private float hitRange;
-    [SerializeField] private float outRange;
+    [SerializeField] private float meleeRange;
+    [SerializeField] private float visibleRange;
     [SerializeField] private bool dropItem;
     [SerializeField] private Transform leftEdge;
     [SerializeField] private Transform rightEdge;
 
-    public bool InHitRange
+    [SerializeField] private float distanceToPlayer;
+
+    public bool InMeleeRange
     {
         get
         {
             if (target != null)
             {
-                return Vector2.Distance(transform.position, target.transform.position) <= hitRange;
+                return Vector2.Distance(transform.position, target.transform.position) <= meleeRange;
             }
             return false;
         }
     }
-    public bool OutOfRange
+    public bool VisibleRange
     {
         get
         {
             if (target != null)
             {
-                return Vector2.Distance(transform.position, target.transform.position) <= outRange;
+                return Vector2.Distance(transform.position, target.transform.position) <= visibleRange;
             }
             return false;
         }
@@ -60,7 +59,9 @@ public class Enemy : Character
             {
                 currentState.Execute();
             }
+            LookAtTarget();
         }
+        distanceToPlayer = Vector2.Distance(transform.position, player.transform.position);
     }
     public void ChangeState(IEnemyStates newState)
     {
@@ -82,6 +83,11 @@ public class Enemy : Character
             yield return null;
         }
     }
+    public void RemoveTarget()
+    {
+        target = null;
+        ChangeState(new PatrolState());
+    }
     public void Move()
     {
         if (!Attack)
@@ -101,11 +107,26 @@ public class Enemy : Character
     {
         return facingRight ? Vector2.right : Vector2.left;
     }
+    private void LookAtTarget()
+    {
+        if (target != null)
+        {
+            float xDir = target.transform.position.x - transform.position.x;
+            if (xDir < 0 && facingRight || xDir > 0 && !facingRight)
+            {
+                ChangeDirection();
+            }
+        }
+    }
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(hitCheck.position, hitRadius);
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(leftEdge.position, 1f);
         Gizmos.DrawWireSphere(rightEdge.position, 1f);
+    }
+    public override void Death()
+    {
+        Debug.Log("Enemy Died");
     }
 }

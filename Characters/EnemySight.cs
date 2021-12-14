@@ -10,7 +10,7 @@ public class EnemySight : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            enemy.target = gameObject;
+            enemy.target = collision.gameObject;
             Debug.Log("I can see you");
         }
     }
