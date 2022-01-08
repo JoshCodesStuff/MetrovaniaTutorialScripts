@@ -6,9 +6,12 @@ public class AtRangeState : IEnemyStates
 {
     private Enemy enemy;
 
-    public void Enter(Enemy enemy) { Debug.Log("At Range"); ; this.enemy = enemy; }
-    public void Exit() { }
-    public void Execute() 
+    public void Enter(Enemy enemy) 
+    { 
+        Debug.Log("At Range"); 
+        this.enemy = enemy; 
+    }
+    public void Execute()
     {
         //if within melee distance to target
         if (enemy.InMeleeRange) enemy.ChangeState(new MeleeState());
@@ -18,5 +21,9 @@ public class AtRangeState : IEnemyStates
 
         //else if enemy can't see player, reset to idle
         else enemy.ChangeState(new IdleState()); 
+    }
+    public void Exit()
+    { 
+        //do nothing
     }
 }

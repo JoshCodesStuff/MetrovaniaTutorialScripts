@@ -23,7 +23,6 @@ public class MeleeState : IEnemyStates
             enemy.ChangeState(new IdleState());
         }
     }
-    public void Exit() { }
     public void Execute() 
     { 
         Attack();
@@ -52,5 +51,9 @@ public class MeleeState : IEnemyStates
             Debug.Log("Hitting");
             enemy.anim.SetTrigger("attack");
         }
+    }
+    public void Exit() 
+    {
+        //do nothing
     }
 }

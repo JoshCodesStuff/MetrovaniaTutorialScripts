@@ -10,8 +10,7 @@ public class AttackBehaviour : StateMachineBehaviour
         animator.GetComponent<Character>().Attack = true;
         animator.SetFloat("speed", 0);
 
-        Player.Instance.Attack = true;
-        if (animator.tag == "Player")
+        if (animator.CompareTag("Player"))
         {
             if (Player.Instance.grounded)
             {
@@ -30,7 +29,10 @@ public class AttackBehaviour : StateMachineBehaviour
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.GetComponent<Character>().Attack = false;
-        if (stateInfo.IsTag("attack")) animator.GetComponent<Character>().MeleeAttack();
+
+        if (stateInfo.IsTag("attack")) 
+            animator.GetComponent<Character>().MeleeAttack();
+
         animator.ResetTrigger("attack");
     }
 

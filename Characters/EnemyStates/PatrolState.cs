@@ -27,13 +27,13 @@ public class PatrolState : IEnemyStates
             enemy.ChangeState(new AtRangeState());
         }
     }
-    public void Exit()
-    {
-
-    }
     private void Patrol()
     {
         patrolTimer += Time.deltaTime;
         if (patrolTimer >= patrolDuration) enemy.ChangeState(new IdleState());
+    }
+    public void Exit()
+    {
+        //do nothing
     }
 }

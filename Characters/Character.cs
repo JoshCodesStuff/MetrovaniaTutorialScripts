@@ -4,16 +4,15 @@ using UnityEngine;
 
 public abstract class Character : MonoBehaviour
 {
-    public Animator anim { get; private set; }
     public bool Attack { get; set; }
+    public bool TakingDamage { get; set; }
+    public Animator anim { get; private set; }
     protected bool facingRight;
     protected abstract bool IsDead { get; }
-    protected bool TakingDamage { get; set; }
 
     [SerializeField] protected GameObject projectile;
 
     [Header("Stats")]
-    [SerializeField] protected int health;
     [SerializeField] protected float speed;
     [SerializeField] protected Stats healthStat;
 

@@ -36,6 +36,6 @@ public class IdleState : IEnemyStates
     }
     public void Exit()
     {
-
+        //do nothing
     }
 }

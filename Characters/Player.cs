@@ -11,13 +11,7 @@ public class Player : Character
     [SerializeField]private float jumpTime;//max time for jumping
     [SerializeField]private float jumpForce;//force for jumping
     private float jumpTimeCounter;//counter tracks time jumping
-    private bool stoppedJumping;//tracks when jump ends
-
-    [Header("Ground Details")]
-    [SerializeField] private LayerMask whatIsGround;//assigned in the inspector
-    [SerializeField] private Transform groundCheck;//detects touching the ground
-    [SerializeField] private float groundCheckRadius;//radius for ground check
-    public bool grounded;//grounded - y/n
+    public bool stoppedJumping;//tracks when jump ends
     private bool IsFalling
     {
         get
@@ -25,6 +19,12 @@ public class Player : Character
             return rb.velocity.y < 0;
         }
     }
+
+    [Header("Ground Details")]
+    [SerializeField] private LayerMask whatIsGround;//assigned in the inspector
+    [SerializeField] private Transform groundCheck;//detects touching the ground
+    [SerializeField] private float groundCheckRadius;//radius for ground check
+    public bool grounded;//grounded - y/n
 
     [Header("Components")]
     private static Player instance;
@@ -54,6 +54,7 @@ public class Player : Character
         jumpTimeCounter = jumpTime;
         rb = GetComponent<Rigidbody2D>();
     }
+    [SerializeField] protected int health;
     private void Update()
     {
         if (!TakingDamage || IsDead)
@@ -68,6 +69,7 @@ public class Player : Character
         }
         grounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
         HandleJumping();
+        health = ((int)healthStat.CurrentVal);
     }
     private void FixedUpdate()
     {
@@ -120,6 +122,10 @@ public class Player : Character
     }
     private void HandleAnims()
     {
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            anim.SetTrigger("attack");
+        }
         if (IsFalling) anim.SetBool("falling", true);
         else anim.SetBool("falling", false);
     }
@@ -131,14 +137,18 @@ public class Player : Character
     public override IEnumerator TakeDamage()
     {
         healthStat.CurrentVal--;
-        TakingDamage = true;
 
-        if (!IsDead) anim.SetTrigger("damage");
+        if (!IsDead)
+        {
+            Debug.Log("Player health at " + healthStat.CurrentVal);
+            anim.SetTrigger("damage");
+        }
         else
         {
-            anim.SetLayerWeight(1, 0);
+            anim.SetLayerWeight(0, 0);
             anim.SetTrigger("die");
         }
+
         yield return null;
     }
 
@@ -149,7 +159,5 @@ public class Player : Character
     public override void Death()
     {
         Debug.Log("Player Died");
-
-        healthStat.CurrentVal = healthStat.MaxVal;
     }
 }
