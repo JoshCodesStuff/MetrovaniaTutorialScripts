@@ -12,7 +12,7 @@ public class MeleeState : IEnemyStates
 
     public void Enter(Enemy enemy) 
     {
-        Debug.Log("Meleeing");
+        Debug.Log("Enemy: Meleeing");
         this.enemy = enemy;
         if (enemy.VisibleRange && !enemy.InMeleeRange)
         {
@@ -42,13 +42,13 @@ public class MeleeState : IEnemyStates
         if (attackTimer>=attackCooldown)
         {
             canAttack = true;
-            Debug.Log("Can Attack Now");
+            Debug.Log("Enemy: Can Attack Now");
             attackTimer = 0;
         }
         if (canAttack)
         {
             canAttack = false;
-            Debug.Log("Hitting");
+            Debug.Log("Enemy: Hitting");
             enemy.anim.SetTrigger("attack");
         }
     }

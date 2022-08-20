@@ -8,9 +8,12 @@ using UnityEngine;
 public class Player : Character
 {
     [Header("Jump Details")]
-    [SerializeField]private float jumpTime;//max time for jumping
-    [SerializeField]private float jumpForce;//force for jumping
-    private float jumpTimeCounter;//counter tracks time jumping
+    [SerializeField]private float fJumpTime;//max time for jumping
+    [SerializeField]private float fJumpForce;//force for jumping
+    private float fJumpTimeCounter;//counter tracks time jumping
+    private float fJumpDiminish = 0.35f;
+    private float fJumpPressedRemember = 0f;
+    private float fJumpPressedRememberTime = 0.05f;
     public bool stoppedJumping;//tracks when jump ends
     private bool IsFalling
     {
@@ -19,16 +22,17 @@ public class Player : Character
             return rb.velocity.y < 0;
         }
     }
-
+    
     [Header("Ground Details")]
     [SerializeField] private LayerMask whatIsGround;//assigned in the inspector
     [SerializeField] private Transform groundCheck;//detects touching the ground
     [SerializeField] private float groundCheckRadius;//radius for ground check
-    public bool grounded;//grounded - y/n
+    private float fGroundedRemember = 0f;
+    private float fGroundedRememberTime = 0.2f;
+    public bool grounded;
 
     [Header("Components")]
     private static Player instance;
-    public Rigidbody2D rb { get; set; }//used to apply forces to player
     public static Player Instance
     {
         get
@@ -40,79 +44,89 @@ public class Player : Character
             return instance;
         }
     }
-    protected override bool IsDead 
+    protected override bool bDead 
     { 
         get 
         {
-            return healthStat.CurrentVal <= 0;
+            return healthStat.CurrentVal < 1;
         } 
     }
+    public Rigidbody2D rb { get; set; }//used to apply forces to player
 
     public override void Start()
     {
         base.Start();
-        jumpTimeCounter = jumpTime;
+        fJumpTimeCounter = fJumpTime;
         rb = GetComponent<Rigidbody2D>();
     }
-    [SerializeField] protected int health;
     private void Update()
     {
-        if (!TakingDamage || IsDead)
+        if (!TakingDamage || bDead)
         {
             HandleAnims();
         }
-        //if we are grounded...
-        if (grounded)
-        {
-            //jumpcounter is whatever we set jumptime to
-            jumpTimeCounter = jumpTime;
-        }
-        grounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
+        
         HandleJumping();
-        health = ((int)healthStat.CurrentVal);
     }
     private void FixedUpdate()
     {
-        if (!TakingDamage && !IsDead)
+        if (!TakingDamage && !bDead)
         {
-            float horizontal = Input.GetAxis("Horizontal");
+            float horizontal = Input.GetAxisRaw("Horizontal");
+            rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
 
             Flip(horizontal);
-            HandleLayers();
-            rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
             anim.SetFloat("speed", Mathf.Abs(horizontal));
         }
     }
+    
     private void HandleJumping()
     {
-        if (Input.GetButtonDown("Jump") && grounded)
+        /* Grounded check to see if player is on or near ground */
+        grounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
+        if (!grounded) anim.SetLayerWeight(1, 1);
+
+        /* if we are grounded... */
+        fGroundedRemember -= Time.deltaTime;
+        if (grounded)
         {
-            //jump!
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-            stoppedJumping = false;
-            anim.SetTrigger("jump");
-        }
-        //if you keep holding down the mouse button...
-        if ((Input.GetButton("Jump")) && !stoppedJumping)
-        {
-            //and your counter hasn't reached zero...
-            if (jumpTimeCounter > 0)
-            {
-                //keep jumping!
-                rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-                jumpTimeCounter -= Time.deltaTime;
-            }
-        }
-        //if you stop holding down the jump button...
-        if (Input.GetButtonUp("Jump"))
-        {
-            //stop jumping, set counter = zero.
-            //timer will reset once we touch the ground
-            jumpTimeCounter = 0;
-            stoppedJumping = true;
+            fGroundedRemember = fGroundedRememberTime;
+            fJumpTimeCounter = fJumpTime;
+            anim.SetBool("falling", false);
             anim.ResetTrigger("jump");
         }
+
+        /* If we press jump... */
+        fJumpPressedRemember -= Time.deltaTime;
+        if (Input.GetButtonDown("Jump"))
+        {
+            fJumpPressedRemember = fJumpPressedRememberTime;
+        }
+
+        if ((fJumpPressedRemember > 0) && (fGroundedRemember > 0))
+        {
+            fJumpPressedRemember = 0;
+            fGroundedRemember = 0;
+            stoppedJumping = false;
+            
+            anim.SetTrigger("jump");
+            
+            rb.velocity = new Vector2(rb.velocity.x, fJumpForce);
+        }
+        /* if you stop holding down the jump button... */
+        if (Input.GetButtonUp("Jump"))
+        {
+            if (rb.velocity.y > 0)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, fJumpDiminish * fJumpForce);
+                fJumpTimeCounter = 0f;
+                stoppedJumping = true;
+            }
+            if (rb.velocity.y < 0)
+                anim.SetBool("falling", true);
+        }   
     }
+    
     public void Flip(float horizontal)
     {
         if (horizontal > 0 && !facingRight || horizontal < 0 && facingRight)
@@ -120,6 +134,7 @@ public class Player : Character
             ChangeDirection();
         }
     }
+    
     private void HandleAnims()
     {
         if (Input.GetKeyDown(KeyCode.X))
@@ -129,18 +144,15 @@ public class Player : Character
         if (IsFalling) anim.SetBool("falling", true);
         else anim.SetBool("falling", false);
     }
-    private void HandleLayers()
-    {
-        if (!grounded) anim.SetLayerWeight(1, 1);
-        else anim.SetLayerWeight(1, 0);
-    }
+
     public override IEnumerator TakeDamage()
     {
         healthStat.CurrentVal--;
 
-        if (!IsDead)
+        if (!bDead)
         {
             Debug.Log("Player health at " + healthStat.CurrentVal);
+            //add camera shake and knockback fx
             anim.SetTrigger("damage");
         }
         else
@@ -152,12 +164,16 @@ public class Player : Character
         yield return null;
     }
 
-    void OnDrawGizmos()
-    {
-        Gizmos.DrawSphere(groundCheck.position, groundCheckRadius);
-    }
+    /* In development */
     public override void Death()
     {
         Debug.Log("Player Died");
+    }
+    
+    /* Debugging */
+    void OnDrawGizmos()
+    {
+        Gizmos.DrawSphere(groundCheck.position, groundCheckRadius);
+        Gizmos.DrawWireSphere(attackCheck.position, hitRadius);
     }
 }

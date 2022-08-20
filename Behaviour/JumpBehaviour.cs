@@ -8,7 +8,8 @@ public class JumpBehaviour : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         Player.Instance.stoppedJumping = true;
-        animator.SetTrigger("jump");
+        // call function to slow in air movement speed
+        // animator.SetTrigger("jump");
     }
 
     // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

@@ -12,7 +12,7 @@ public class IdleState : IEnemyStates
     public void Enter(Enemy enemy)
     {
         this.enemy = enemy;
-        Debug.Log("I'm Idling");
+        Debug.Log("Enemy: I'm Idling");
         idleTimer = 0;
         idleDuration = Random.Range(1, 10);
     }

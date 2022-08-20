@@ -39,7 +39,7 @@ public class Enemy : Character
             return false;
         }
     }
-    protected override bool IsDead
+    protected override bool bDead
     {
         get
         {
@@ -53,7 +53,7 @@ public class Enemy : Character
     }
     public void Update()
     {
-        if (!IsDead)
+        if (!bDead)
         {
             if (!TakingDamage)
             {
@@ -73,7 +73,7 @@ public class Enemy : Character
     {
         healthStat.CurrentVal -= 10;
 
-        if (!IsDead)
+        if (!bDead)
         {
             anim.SetTrigger("hit");
         }
@@ -90,7 +90,7 @@ public class Enemy : Character
     }
     public void Move()
     {
-        if (!Attack)
+        if (!Attacking)
         {
             if ((GetDirection().x > 0 && transform.position.x < rightEdge.position.x) || (GetDirection().x < 0 && transform.position.x > leftEdge.position.x))
             {
@@ -120,7 +120,7 @@ public class Enemy : Character
     }
     private void OnDrawGizmos()
     {
-        Gizmos.DrawWireSphere(hitCheck.position, hitRadius);
+        Gizmos.DrawWireSphere(attackCheck.position, hitRadius);
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(leftEdge.position, 1f);
         Gizmos.DrawWireSphere(rightEdge.position, 1f);

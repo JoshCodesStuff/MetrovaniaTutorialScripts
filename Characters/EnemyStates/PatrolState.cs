@@ -12,7 +12,7 @@ public class PatrolState : IEnemyStates
     public void Enter(Enemy enemy)
     {
         this.enemy = enemy;
-        Debug.Log("Patrolling");
+        Debug.Log("Enemy: Patrolling");
         patrolTimer = 0f;
         patrolDuration = Random.Range(5, 10);
     }

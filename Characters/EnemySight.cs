@@ -11,7 +11,7 @@ public class EnemySight : MonoBehaviour
         if (collision.CompareTag("Player"))
         {
             enemy.target = collision.gameObject;
-            Debug.Log("I can see you");
+            Debug.Log("There you are...");
         }
     }
     private void OnTriggerExit2D(Collider2D collision)

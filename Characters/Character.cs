@@ -4,11 +4,12 @@ using UnityEngine;
 
 public abstract class Character : MonoBehaviour
 {
-    public bool Attack { get; set; }
+    public List<KeyValuePair<string, bool>> Conditions;
+    public bool Attacking { get; set; }
     public bool TakingDamage { get; set; }
     public Animator anim { get; private set; }
     protected bool facingRight;
-    protected abstract bool IsDead { get; }
+    protected abstract bool bDead { get; }
 
     [SerializeField] protected GameObject projectile;
 
@@ -18,12 +19,12 @@ public abstract class Character : MonoBehaviour
 
     [Header("Attack Details")]
     public float hitRadius;
-    public Transform hitCheck;
-    public LayerMask whatisenemy;
+    public Transform attackCheck;
+    public LayerMask whatIsEnemy;
 
     public virtual void Start()
     {
-        Attack = false;
+        Attacking = false;
         facingRight = true;
         anim = GetComponent<Animator>();
         healthStat.Initialise();
@@ -36,7 +37,7 @@ public abstract class Character : MonoBehaviour
 
     public void MeleeAttack()
     {
-        Collider2D player = Physics2D.OverlapCircle(hitCheck.position, hitRadius, whatisenemy);
+        Collider2D player = Physics2D.OverlapCircle(attackCheck.position, hitRadius, whatIsEnemy);
         if (player != null) StartCoroutine(player.GetComponent<Character>().TakeDamage());
     }
 
@@ -44,11 +45,11 @@ public abstract class Character : MonoBehaviour
     {
         if (facingRight)
         {
-            GameObject temp = (GameObject)Instantiate(projectile, hitCheck.position, Quaternion.Euler(new Vector3(0, 0, -90)));
+            GameObject temp = (GameObject)Instantiate(projectile, attackCheck.position, Quaternion.Euler(new Vector3(0, 0, -90)));
         }
         else
         {
-            GameObject temp = (GameObject)Instantiate(projectile, hitCheck.position, Quaternion.Euler(new Vector3(0, 0, +90)));
+            GameObject temp = (GameObject)Instantiate(projectile, attackCheck.position, Quaternion.Euler(new Vector3(0, 0, +90)));
         }
     }
 

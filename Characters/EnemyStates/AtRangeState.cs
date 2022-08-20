@@ -8,7 +8,7 @@ public class AtRangeState : IEnemyStates
 
     public void Enter(Enemy enemy) 
     { 
-        Debug.Log("At Range"); 
+        Debug.Log("Enemy: Moving closer"); 
         this.enemy = enemy; 
     }
     public void Execute()
