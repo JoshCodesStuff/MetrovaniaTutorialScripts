@@ -12,8 +12,8 @@ public class Player : Character
     [SerializeField]private float fJumpForce;//force for jumping
     private float fJumpTimeCounter;//counter tracks time jumping
     private float fJumpDiminish = 0.35f;
-    private float fJumpPressedRemember = 0f;
-    private float fJumpPressedRememberTime = 0.05f;
+    [SerializeField] private float fJumpPressedRemember = 0f;
+    [SerializeField] private float fJumpPressedRememberTime = 0.05f;
     public bool stoppedJumping;//tracks when jump ends
     private bool IsFalling
     {
