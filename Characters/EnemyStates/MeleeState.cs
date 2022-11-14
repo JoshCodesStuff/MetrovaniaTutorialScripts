@@ -18,7 +18,7 @@ public class MeleeState : IEnemyStates
         {
             enemy.ChangeState(new AtRangeState());
         }
-        else if (enemy.target == null)
+        else if (enemy.Target == null)
         {
             enemy.ChangeState(new IdleState());
         }
@@ -31,7 +31,7 @@ public class MeleeState : IEnemyStates
         {
             enemy.ChangeState(new AtRangeState());
         }
-        else if (enemy.target == null)
+        else if (enemy.Target == null)
         {
             enemy.ChangeState(new IdleState());
         }

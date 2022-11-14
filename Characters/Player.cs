@@ -31,6 +31,10 @@ public class Player : Character
     private float fGroundedRememberTime = 0.2f;
     public bool grounded;
 
+    [Header("Weapon Details")]
+    [SerializeField] private bool wDrawn;
+
+
     [Header("Components")]
     private static Player instance;
     public static Player Instance
@@ -58,6 +62,7 @@ public class Player : Character
         base.Start();
         fJumpTimeCounter = fJumpTime;
         rb = GetComponent<Rigidbody2D>();
+        wDrawn = false;
     }
     private void Update()
     {
@@ -65,15 +70,22 @@ public class Player : Character
         {
             HandleAnims();
         }
-        
-        HandleJumping();
+        if (!bDead) HandleJumping();
     }
     private void FixedUpdate()
     {
+        HandleMovement();
+    }
+    private void HandleMovement()
+    {
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        
         if (!TakingDamage && !bDead)
         {
-            float horizontal = Input.GetAxisRaw("Horizontal");
-            rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+            if (Attacking && grounded)
+                rb.velocity = Vector2.zero;
+            else
+                rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
 
             Flip(horizontal);
             anim.SetFloat("speed", Mathf.Abs(horizontal));
@@ -84,10 +96,8 @@ public class Player : Character
     {
         /* Grounded check to see if player is on or near ground */
         grounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
-        if (!grounded) anim.SetLayerWeight(1, 1);
 
         /* if we are grounded... */
-        fGroundedRemember -= Time.deltaTime;
         if (grounded)
         {
             fGroundedRemember = fGroundedRememberTime;
@@ -95,13 +105,15 @@ public class Player : Character
             anim.SetBool("falling", false);
             anim.ResetTrigger("jump");
         }
+        else { 
+            fGroundedRemember -= Time.deltaTime; //count down
+        }
 
         /* If we press jump... */
-        fJumpPressedRemember -= Time.deltaTime;
         if (Input.GetButtonDown("Jump"))
-        {
             fJumpPressedRemember = fJumpPressedRememberTime;
-        }
+        else
+            fJumpPressedRemember -= Time.deltaTime;
 
         if ((fJumpPressedRemember > 0) && (fGroundedRemember > 0))
         {
@@ -168,6 +180,7 @@ public class Player : Character
     public override void Death()
     {
         Debug.Log("Player Died");
+
     }
     
     /* Debugging */

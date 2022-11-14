@@ -10,7 +10,7 @@ public class EnemySight : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            enemy.target = collision.gameObject;
+            enemy.Target = collision.gameObject;
             Debug.Log("There you are...");
         }
     }
@@ -18,7 +18,7 @@ public class EnemySight : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            enemy.target = null;
+            enemy.Target = null;
             Debug.Log("Are you still there?");
         }
     }

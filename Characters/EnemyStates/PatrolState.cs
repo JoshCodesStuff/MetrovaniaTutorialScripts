@@ -7,7 +7,7 @@ public class PatrolState : IEnemyStates
     private Enemy enemy;
 
     private float patrolTimer;
-    private float patrolDuration = 10f;
+    private float patrolDuration;
 
     public void Enter(Enemy enemy)
     {
@@ -22,7 +22,7 @@ public class PatrolState : IEnemyStates
 
         enemy.Move();
 
-        if (enemy.target != null && enemy.VisibleRange)
+        if (enemy.Target != null && enemy.VisibleRange)
         {
             enemy.ChangeState(new AtRangeState());
         }
@@ -30,7 +30,7 @@ public class PatrolState : IEnemyStates
     private void Patrol()
     {
         patrolTimer += Time.deltaTime;
-        if (patrolTimer >= patrolDuration) enemy.ChangeState(new IdleState());
+        if (patrolTimer > patrolDuration) enemy.ChangeState(new IdleState());
     }
     public void Exit()
     {

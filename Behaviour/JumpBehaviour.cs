@@ -7,6 +7,7 @@ public class JumpBehaviour : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        animator.SetLayerWeight(1, 1);
         Player.Instance.stoppedJumping = true;
         // call function to slow in air movement speed
         // animator.SetTrigger("jump");

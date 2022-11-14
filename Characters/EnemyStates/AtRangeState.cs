@@ -8,7 +8,7 @@ public class AtRangeState : IEnemyStates
 
     public void Enter(Enemy enemy) 
     { 
-        Debug.Log("Enemy: Moving closer"); 
+        Debug.Log("Enemy: Moving closer");
         this.enemy = enemy; 
     }
     public void Execute()
@@ -17,7 +17,7 @@ public class AtRangeState : IEnemyStates
         if (enemy.InMeleeRange) enemy.ChangeState(new MeleeState());
 
         //else if player is visible but outside of hit range
-        else if (enemy.target != null) enemy.Move();
+        else if (enemy.Target != null) enemy.Move();
 
         //else if enemy can't see player, reset to idle
         else enemy.ChangeState(new IdleState()); 

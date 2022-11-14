@@ -19,7 +19,7 @@ public class IdleState : IEnemyStates
     public void Execute()
     {
         Idle();
-        if (enemy.target != null)
+        if (enemy.Target != null)
         {
             enemy.ChangeState(new PatrolState());
         }

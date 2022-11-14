@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class Character : MonoBehaviour
 {
-    public List<KeyValuePair<string, bool>> Conditions;
+    public string CharacterType;
     public bool Attacking { get; set; }
     public bool TakingDamage { get; set; }
     public Animator anim { get; private set; }
@@ -20,7 +20,7 @@ public abstract class Character : MonoBehaviour
     [Header("Attack Details")]
     public float hitRadius;
     public Transform attackCheck;
-    public LayerMask whatIsEnemy;
+    public LayerMask whatIsTarget; //thing the character wants to kill
 
     public virtual void Start()
     {
@@ -37,19 +37,20 @@ public abstract class Character : MonoBehaviour
 
     public void MeleeAttack()
     {
-        Collider2D player = Physics2D.OverlapCircle(attackCheck.position, hitRadius, whatIsEnemy);
-        if (player != null) StartCoroutine(player.GetComponent<Character>().TakeDamage());
+        Debug.Log("attack called on " + CharacterType);
+        Collider2D target = Physics2D.OverlapCircle(attackCheck.position, hitRadius, whatIsTarget);
+        if (target != null) StartCoroutine(target.GetComponent<Character>().TakeDamage());
     }
 
     public virtual void RangedAttack()
     {
         if (facingRight)
         {
-            GameObject temp = (GameObject)Instantiate(projectile, attackCheck.position, Quaternion.Euler(new Vector3(0, 0, -90)));
+            GameObject temp = (GameObject)Instantiate(projectile, attackCheck.position, Quaternion.Euler(new Vector3(0.0f, 0.0f, -90.0f)));
         }
         else
         {
-            GameObject temp = (GameObject)Instantiate(projectile, attackCheck.position, Quaternion.Euler(new Vector3(0, 0, +90)));
+            GameObject temp = (GameObject)Instantiate(projectile, attackCheck.position, Quaternion.Euler(new Vector3(0.0f, 0.0f, +90.0f)));
         }
     }
 
