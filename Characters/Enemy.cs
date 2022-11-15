@@ -11,20 +11,20 @@ public class Enemy : Character
     [SerializeField] public GameObject Target { get; set; }
     public Transform player;
 
+    [SerializeField] private bool dropItem;
     [SerializeField] private float meleeRange;
     [SerializeField] private float visibleRange;
-    [SerializeField] private bool dropItem;
     [SerializeField] private Transform leftEdge;
     [SerializeField] private Transform rightEdge;
+    [SerializeField] private float distanceToPlayer;
 
-    private bool immortal;
+    [SerializeField] private bool immortal;
     private float immortalDur = 0.1f;
     private SpriteRenderer spRenderer;
 
     private Rigidbody2D rb;
 
 
-    [SerializeField] private float distanceToPlayer;
 
     public bool InMeleeRange
     {
@@ -133,15 +133,20 @@ public class Enemy : Character
     }
     public override IEnumerator TakeDamage()
     {
-        rb.AddForce(new Vector2(-10, 0), ForceMode2D.Impulse);
         if (!immortal && !bDead)
         {
             if (Random.Range(0, 10) == 0)
             {
-                healthStat.CurrentVal -= 2;
+                healthStat.CurrentVal -= 3;
+                Vector2 knockback = new Vector2(-1 * GetDirection().x * power, Mathf.Abs(power));
+                rb.AddForce(knockback, ForceMode2D.Impulse);
                 Debug.Log("Enemy takes a Critical Hit");
             }
-            else healthStat.CurrentVal--;
+            else {
+                Vector2 knockback = new Vector2(distanceToPlayer * 0.5f * power, Mathf.Abs(power));
+                rb.AddForce(knockback, ForceMode2D.Impulse);
+                healthStat.CurrentVal--;
+            }
         }
 
         if (!bDead)

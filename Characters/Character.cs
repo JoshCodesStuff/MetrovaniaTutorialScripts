@@ -15,6 +15,7 @@ public abstract class Character : MonoBehaviour
 
     [Header("Stats")]
     [SerializeField] protected float speed;
+    [SerializeField] protected float power;
     [SerializeField] protected Stats healthStat;
 
     [Header("Attack Details")]

@@ -11,7 +11,7 @@ public class Player : Character
     [SerializeField]private float fJumpTime;//max time for jumping
     [SerializeField]private float fJumpForce;//force for jumping
     private float fJumpTimeCounter;//counter tracks time jumping
-    private float fJumpDiminish = 0.35f;
+    [SerializeField] private float fJumpDiminish = 0.15f;
     [SerializeField] private float fJumpPressedRemember = 0f;
     [SerializeField] private float fJumpPressedRememberTime = 0.05f;
     public bool stoppedJumping;//tracks when jump ends
@@ -27,7 +27,7 @@ public class Player : Character
     [SerializeField] private LayerMask whatIsGround;//assigned in the inspector
     [SerializeField] private Transform groundCheck;//detects touching the ground
     [SerializeField] private float groundCheckRadius;//radius for ground check
-    private float fGroundedRemember = 0f;
+    private float fGroundedRemember;
     private float fGroundedRememberTime = 0.2f;
     public bool grounded;
 
@@ -57,12 +57,14 @@ public class Player : Character
     }
     public Rigidbody2D rb { get; set; }//used to apply forces to player
 
+    #region monos
     public override void Start()
     {
         base.Start();
         fJumpTimeCounter = fJumpTime;
         rb = GetComponent<Rigidbody2D>();
         wDrawn = false;
+        fGroundedRemember = 0f;
     }
     private void Update()
     {
@@ -76,6 +78,8 @@ public class Player : Character
     {
         HandleMovement();
     }
+    #endregion //monos
+
     private void HandleMovement()
     {
         float horizontal = Input.GetAxisRaw("Horizontal");
@@ -115,26 +119,27 @@ public class Player : Character
         else
             fJumpPressedRemember -= Time.deltaTime;
 
-        if ((fJumpPressedRemember > 0) && (fGroundedRemember > 0))
+        if ((fJumpPressedRemember > 0f) && (fGroundedRemember > 0f))
         {
-            fJumpPressedRemember = 0;
-            fGroundedRemember = 0;
+            fJumpPressedRemember = 0f;
+            fGroundedRemember = 0f;
             stoppedJumping = false;
             
             anim.SetTrigger("jump");
             
-            rb.velocity = new Vector2(rb.velocity.x, fJumpForce);
+            rb.AddForce(new Vector2(0, fJumpForce), ForceMode2D.Impulse);
         }
         /* if you stop holding down the jump button... */
         if (Input.GetButtonUp("Jump"))
         {
-            if (rb.velocity.y > 0)
+            if (rb.velocity.y > 0f)
             {
                 rb.velocity = new Vector2(rb.velocity.x, fJumpDiminish * fJumpForce);
+                //rb.AddForce(new Vector2(0, fJumpForce), ForceMode2D.Impulse);
                 fJumpTimeCounter = 0f;
                 stoppedJumping = true;
             }
-            if (rb.velocity.y < 0)
+            if (rb.velocity.y < 0f)
                 anim.SetBool("falling", true);
         }   
     }
