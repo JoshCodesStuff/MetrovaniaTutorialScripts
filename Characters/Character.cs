@@ -5,11 +5,11 @@ using UnityEngine;
 public abstract class Character : MonoBehaviour
 {
     public string CharacterType;
-    public bool Attacking { get; set; }
-    public bool TakingDamage { get; set; }
-    public Animator anim { get; private set; }
+    [field: SerializeField] public bool Attacking { get; set; }
+    [field: SerializeField] public bool TakingDamage { get; set; }
+    [field: SerializeField] public Animator anim { get; private set; }
+    protected abstract bool Dead { get; }
     protected bool facingRight;
-    protected abstract bool bDead { get; }
 
     [SerializeField] protected GameObject projectile;
 
@@ -21,13 +21,15 @@ public abstract class Character : MonoBehaviour
     [Header("Attack Details")]
     public float hitRadius;
     public Transform attackCheck;
-    public LayerMask whatIsTarget; //thing the character wants to kill
+    public LayerMask whatIsTarget; // thing the character wants to kill
 
     public virtual void Start()
     {
         Attacking = false;
         facingRight = true;
+
         anim = GetComponent<Animator>();
+
         healthStat.Initialise();
     }
     public virtual void ChangeDirection()
@@ -38,9 +40,12 @@ public abstract class Character : MonoBehaviour
 
     public void MeleeAttack()
     {
-        Debug.Log("attack called on " + CharacterType);
         Collider2D target = Physics2D.OverlapCircle(attackCheck.position, hitRadius, whatIsTarget);
-        if (target != null) StartCoroutine(target.GetComponent<Character>().TakeDamage());
+        if (target != null)
+        {
+            Debug.Log(CharacterType + " attacked " + target.GetComponent<Character>().CharacterType);
+            StartCoroutine(target.GetComponent<Character>().TakeDamage());
+        }
     }
 
     public virtual void RangedAttack()
@@ -54,7 +59,6 @@ public abstract class Character : MonoBehaviour
             GameObject temp = (GameObject)Instantiate(projectile, attackCheck.position, Quaternion.Euler(new Vector3(0.0f, 0.0f, +90.0f)));
         }
     }
-
 
     public abstract IEnumerator TakeDamage();
     public abstract void Death();

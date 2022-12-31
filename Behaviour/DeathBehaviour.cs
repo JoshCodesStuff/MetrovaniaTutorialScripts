@@ -9,6 +9,7 @@ public class DeathBehaviour : StateMachineBehaviour
     // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        Debug.Log(animator.gameObject.GetComponent<Character>().CharacterType + " Died");
         deathTimer = 0;
     }
 

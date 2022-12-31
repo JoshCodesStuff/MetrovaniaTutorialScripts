@@ -1,9 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(SpriteRenderer))]
+
 public class Enemy : Character
 {
     private IEnemyStates currentState;
@@ -16,15 +17,11 @@ public class Enemy : Character
     [SerializeField] private float visibleRange;
     [SerializeField] private Transform leftEdge;
     [SerializeField] private Transform rightEdge;
-    [SerializeField] private float distanceToPlayer;
+    [SerializeField] private Vector3 distanceToPlayer;
 
     [SerializeField] private bool immortal;
-    private float immortalDur = 0.1f;
+    private float immortalDur = 0.3f;
     private SpriteRenderer spRenderer;
-
-    private Rigidbody2D rb;
-
-
 
     public bool InMeleeRange
     {
@@ -48,7 +45,7 @@ public class Enemy : Character
             return false;
         }
     }
-    protected override bool bDead
+    protected override bool Dead
     {
         get
         {
@@ -60,12 +57,12 @@ public class Enemy : Character
     public override void Start()
     {
         base.Start();
+        spRenderer = GetComponent<SpriteRenderer>();
         ChangeState(new IdleState());
-        rb = GetComponent<Rigidbody2D>();
     }
     public void Update()
     {
-        if (!bDead)
+        if (!Dead)
         {
             if (!TakingDamage)
             {
@@ -73,7 +70,7 @@ public class Enemy : Character
             }
             LookAtTarget();
         }
-        distanceToPlayer = Vector2.Distance(transform.position, player.transform.position);
+        distanceToPlayer.x = player.transform.position.x - transform.position.x;
     }
     #endregion //monos
     public void ChangeState(IEnemyStates newState)
@@ -89,7 +86,7 @@ public class Enemy : Character
     }
     public void Move()
     {
-        if (!Attacking && !bDead)
+        if (!Attacking && !Dead)
         {
             if ((GetDirection().x > 0 && transform.position.x < rightEdge.position.x) || (GetDirection().x < 0 && transform.position.x > leftEdge.position.x))
             {
@@ -118,9 +115,6 @@ public class Enemy : Character
         }
     }
     
-    /**
-     * inherited from Character
-     */
     private IEnumerator IndicateImmortal()
     {
         while(immortal)
@@ -133,34 +127,37 @@ public class Enemy : Character
     }
     public override IEnumerator TakeDamage()
     {
-        if (!immortal && !bDead)
+        if (!immortal && !Dead)
         {
             if (Random.Range(0, 10) == 0)
             {
                 healthStat.CurrentVal -= 3;
-                Vector2 knockback = new Vector2(-1 * GetDirection().x * power, Mathf.Abs(power));
-                rb.AddForce(knockback, ForceMode2D.Impulse);
                 Debug.Log("Enemy takes a Critical Hit");
             }
-            else {
-                Vector2 knockback = new Vector2(distanceToPlayer * 0.5f * power, Mathf.Abs(power));
-                rb.AddForce(knockback, ForceMode2D.Impulse);
-                healthStat.CurrentVal--;
-            }
+            else healthStat.CurrentVal--;
         }
 
-        if (!bDead)
+        if (!Dead)
         {
             anim.SetTrigger("hit");
-            Debug.Log("Enemy health at " + healthStat.CurrentVal);
-            Target = Player.Instance.gameObject;
+            Target = Player.Instance.gameObject; // for when ranged attacks become a thing
+
+            // prevent attack spamming
             immortal = true;
             StartCoroutine(IndicateImmortal());
             yield return new WaitForSeconds(immortalDur);
+
             immortal = false;
+
+            // just to keep track of what was happening
+            Debug.Log("Enemy health at " + healthStat.CurrentVal);
         }
         else anim.SetTrigger("die");
         yield return null;
+    }
+    public override void Death()
+    {
+        GetComponent<Collider2D>().enabled = false;
     }
     private void OnDrawGizmos()
     {
@@ -168,9 +165,5 @@ public class Enemy : Character
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(leftEdge.position, 1f);
         Gizmos.DrawWireSphere(rightEdge.position, 1f);
-    }
-    public override void Death()
-    {
-        Debug.Log("Enemy Died");
     }
 }
