@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class AtRangeState : IEnemyStates
 {
-    private Enemy enemy;
+    private EnemyCharacter enemy;
 
-    public void Enter(Enemy enemy) 
+    public void Enter(EnemyCharacter enemy) 
     { 
         Debug.Log("Enemy: Moving closer");
         this.enemy = enemy; 

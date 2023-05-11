@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class IdleState : IEnemyStates
 {
-    private Enemy enemy;
+    private EnemyCharacter enemy;
 
     private float idleTimer;
     private float idleDuration;
     
-    public void Enter(Enemy enemy)
+    public void Enter(EnemyCharacter enemy)
     {
         this.enemy = enemy;
         Debug.Log("Enemy: I'm Idling");

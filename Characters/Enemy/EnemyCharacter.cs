@@ -5,61 +5,33 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(SpriteRenderer))]
 
-public class Enemy : Character
+public class EnemyCharacter : Character
 {
     private IEnemyStates currentState;
 
-    [SerializeField] public GameObject Target { get; set; }
+    public GameObject Target { get; set; }
+    private SpriteRenderer spRenderer;
     public Transform player;
 
     [SerializeField] private bool dropItem;
-    [SerializeField] private float meleeRange;
-    [SerializeField] private float visibleRange;
-    [SerializeField] private Transform leftEdge;
-    [SerializeField] private Transform rightEdge;
+    [SerializeField] private bool immortal;
     [SerializeField] private Vector3 distanceToPlayer;
 
-    [SerializeField] private bool immortal;
     private float immortalDur = 0.3f;
-    private SpriteRenderer spRenderer;
 
-    public bool InMeleeRange
-    {
-        get
-        {
-            if (Target != null)
-            {
-                return Vector2.Distance(transform.position, Target.transform.position) <= meleeRange;
-            }
-            return false;
-        }
-    }
-    public bool VisibleRange
-    {
-        get
-        {
-            if (Target != null)
-            {
-                return Vector2.Distance(transform.position, Target.transform.position) <= visibleRange;
-            }
-            return false;
-        }
-    }
-    protected override bool Dead
-    {
-        get
-        {
-            return healthStat.CurrentVal <= 0;
-        }
-    }
-    
+    public EnemyMovement movement;
+    public EnemyCombat attack;
+
     #region monos
     public override void Start()
     {
         base.Start();
         spRenderer = GetComponent<SpriteRenderer>();
+        movement = GetComponent<EnemyMovement>();
+        attack = GetComponent<EnemyCombat>();
         ChangeState(new IdleState());
     }
+
     public void Update()
     {
         if (!Dead)
@@ -73,36 +45,20 @@ public class Enemy : Character
         distanceToPlayer.x = player.transform.position.x - transform.position.x;
     }
     #endregion //monos
+
     public void ChangeState(IEnemyStates newState)
     {
         if (currentState != null) currentState.Exit();
         currentState = newState;
         currentState.Enter(this);
     }
+
     public void RemoveTarget()
     {
         Target = null;
         ChangeState(new PatrolState());
     }
-    public void Move()
-    {
-        if (!Attacking && !Dead)
-        {
-            if ((GetDirection().x > 0 && transform.position.x < rightEdge.position.x) || (GetDirection().x < 0 && transform.position.x > leftEdge.position.x))
-            {
-                anim.SetFloat("speed", 1);
-                transform.Translate(GetDirection() * (speed * Time.deltaTime));
-            }
-            else if (currentState is PatrolState)
-            {
-                ChangeDirection();
-            }
-        }
-    }
-    public Vector2 GetDirection()
-    {
-        return facingRight ? Vector2.right : Vector2.left;
-    }
+
     private void LookAtTarget()
     {
         if (Target != null)
@@ -114,10 +70,10 @@ public class Enemy : Character
             }
         }
     }
-    
+
     private IEnumerator IndicateImmortal()
     {
-        while(immortal)
+        while (immortal)
         {
             spRenderer.enabled = false;
             yield return new WaitForSeconds(0.1f);
@@ -125,6 +81,7 @@ public class Enemy : Character
             yield return new WaitForSeconds(0.1f);
         }
     }
+
     public override IEnumerator TakeDamage()
     {
         if (!immortal && !Dead)
@@ -140,7 +97,7 @@ public class Enemy : Character
         if (!Dead)
         {
             anim.SetTrigger("hit");
-            Target = Player.Instance.gameObject; // for when ranged attacks become a thing
+            Target = PlayerCharacter.Instance.gameObject; // for when ranged attacks become a thing
 
             // prevent attack spamming
             immortal = true;
@@ -155,10 +112,12 @@ public class Enemy : Character
         else anim.SetTrigger("die");
         yield return null;
     }
+
     public override void Death()
     {
         GetComponent<Collider2D>().enabled = false;
     }
+
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(attackCheck.position, hitRadius);

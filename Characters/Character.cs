@@ -2,26 +2,30 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Character : MonoBehaviour
+public abstract class Character : MonoBehaviour 
 {
+    public LayerMask whatIsTarget; // thing the character wants to kill
+    public Transform attackCheck;
     public string CharacterType;
-    [field: SerializeField] public bool Attacking { get; set; }
-    [field: SerializeField] public bool TakingDamage { get; set; }
+    public float hitRadius;
+    public bool facingRight;
+
     [field: SerializeField] public Animator anim { get; private set; }
-    protected abstract bool Dead { get; }
-    protected bool facingRight;
-
+    [field: SerializeField] public bool TakingDamage { get; set; }
+    [field: SerializeField] public bool Attacking { get; set; }
+    
     [SerializeField] protected GameObject projectile;
-
-    [Header("Stats")]
     [SerializeField] protected float speed;
     [SerializeField] protected float power;
     [SerializeField] protected Stats healthStat;
-
-    [Header("Attack Details")]
-    public float hitRadius;
-    public Transform attackCheck;
-    public LayerMask whatIsTarget; // thing the character wants to kill
+    
+    public bool Dead
+    {
+        get
+        {
+            return healthStat.CurrentVal <= 0;
+        }
+    }
 
     public virtual void Start() {
         Attacking = false;

@@ -5,6 +5,6 @@ using UnityEngine;
 public interface IEnemyStates
 {
     void Execute();
-    void Enter(Enemy enemy);
+    void Enter(EnemyCharacter enemy);
     void Exit();
 }

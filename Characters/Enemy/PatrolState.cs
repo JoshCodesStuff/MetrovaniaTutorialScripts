@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class PatrolState : IEnemyStates
 {
-    private Enemy enemy;
+    private EnemyCharacter enemy;
 
     private float patrolTimer;
     private float patrolDuration;
 
-    public void Enter(Enemy enemy)
+    public void Enter(EnemyCharacter enemy)
     {
         this.enemy = enemy;
         Debug.Log("Enemy: Patrolling");

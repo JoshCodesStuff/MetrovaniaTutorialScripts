@@ -8,9 +8,9 @@ public class MeleeState : IEnemyStates
     private float attackCooldown = 3;
     private bool canAttack = true;
 
-    private Enemy enemy;
+    private EnemyCharacter enemy;
 
-    public void Enter(Enemy enemy) 
+    public void Enter(EnemyCharacter enemy) 
     {
         Debug.Log("Enemy: Meleeing");
         this.enemy = enemy;
