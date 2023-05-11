@@ -8,11 +8,11 @@ using UnityEngine;
 public class Player : Character
 {
     [Header("Jump Details")]
-    private float JumpForgiveTime;                      //press jump within 'x' time and you jump
-    [SerializeField] private float MaxJumpTime;         //max time for jumping
-    [SerializeField] private float JumpForce;           //force for jumping
-    [SerializeField] private float JumpDiminish;        //amount jump diminishes over time
-    [SerializeField] private float MaxJumpForgiveTime;  //the 'x'
+    private float JumpForgiveTime;                      // press jump within 'x' time and you jump
+    [SerializeField] private float MaxJumpTime;         // max time for jumping
+    [SerializeField] private float JumpForce;           // force for jumping
+    [SerializeField] private float JumpDiminish;        // amount jump diminishes over time
+    [SerializeField] private float MaxJumpForgiveTime;  // the 'x'
     private bool IsFalling
     {
         get
@@ -33,11 +33,11 @@ public class Player : Character
     }
     
     [Header("Ground Details")]
-    [SerializeField] private LayerMask whatIsGround;            //assigned in the inspector
-    [SerializeField] private Transform groundCheck;             //detects touching the ground
-    [SerializeField] private float groundCheckRadius;           //radius for ground check
-    private float GroundedCounter;                              //counts how long since last grounded
-    [field: SerializeField] private bool Grounded { get; set; } //whether player is grounded or not
+    [SerializeField] private LayerMask whatIsGround;            // assigned in the inspector
+    [SerializeField] private Transform groundCheck;             // detects touching the ground
+    [SerializeField] private float groundCheckRadius;           // radius for ground check
+    private float GroundedCounter;                              // counts how long since last grounded
+    [field: SerializeField] private bool Grounded { get; set; } // whether player is grounded or not
     
 
     /* components and instances */

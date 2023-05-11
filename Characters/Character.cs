@@ -23,8 +23,7 @@ public abstract class Character : MonoBehaviour
     public Transform attackCheck;
     public LayerMask whatIsTarget; // thing the character wants to kill
 
-    public virtual void Start()
-    {
+    public virtual void Start() {
         Attacking = false;
         facingRight = true;
 
@@ -32,14 +31,12 @@ public abstract class Character : MonoBehaviour
 
         healthStat.Initialise();
     }
-    public virtual void ChangeDirection()
-    {
+    public virtual void ChangeDirection() {
         facingRight = !facingRight;
         transform.localScale = new Vector2(transform.localScale.x * -1, 1);
     }
 
-    public void MeleeAttack()
-    {
+    public void MeleeAttack() {
         Collider2D target = Physics2D.OverlapCircle(attackCheck.position, hitRadius, whatIsTarget);
         if (target != null)
         {
@@ -48,14 +45,11 @@ public abstract class Character : MonoBehaviour
         }
     }
 
-    public virtual void RangedAttack()
-    {
-        if (facingRight)
-        {
+    public virtual void RangedAttack() {
+        if (facingRight) {
             GameObject temp = (GameObject)Instantiate(projectile, attackCheck.position, Quaternion.Euler(new Vector3(0.0f, 0.0f, -90.0f)));
         }
-        else
-        {
+        else {
             GameObject temp = (GameObject)Instantiate(projectile, attackCheck.position, Quaternion.Euler(new Vector3(0.0f, 0.0f, +90.0f)));
         }
     }
